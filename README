@@ -4,7 +4,7 @@ Installation process:
 
 First change server and channel name in code, where you want to add bot.
 
-170 rwBot = RwBotFactory('knowhowERP_dev', 'rwbot', svn)
+170 rwBot = RwBotFactory('#test', 'rwbot', svn)
 
 171
 
@@ -12,6 +12,6 @@ First change server and channel name in code, where you want to add bot.
 
 Don't forget to change this line:
 
-108 redmine = feedparser.parse("redmine/activity.atom?key=7c58101c32da49aba2e02f9c3354452efdcc0e7b")
+108 redmine = feedparser.parse("...")
 
 Start bot by simply typing 'python redmineIRCBot.py
