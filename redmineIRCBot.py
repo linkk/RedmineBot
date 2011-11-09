@@ -76,7 +76,7 @@ class RwBot(irc.IRCClient):
                 if et > self.wiki_latest:
                     # print it
                     msg = "Wiki (%s): %s" % (e.author_detail.name, e.link)
-                    self.msg(self.factory.channel, msg.encode('ascii', 'ignore'))
+                    self.msg(self.factory.channel, msg.encode('utf-8', 'ignore'))
                     
                     # find the new latest time
                     if et > latest_new:
@@ -92,7 +92,7 @@ class RwBot(irc.IRCClient):
             latest_new = self.redmine_latest
             # Then we run.
             self.redmine_next = self.redmine_next + 60 * 5
-            redmine = feedparser.parse("http://redmine.bring.out.ba/activity.atom?key=7c58101c32da49aba2e02f9c3354452efdcc0e7b")
+            redmine = feedparser.parse("http://redmine/activity.atom?key=7c58101c32da49aba2e02f9c3354452efdcc0e7b")
             
             for i in reversed(range(len(redmine.entries))):
                 e = redmine.entries[i]
@@ -102,7 +102,7 @@ class RwBot(irc.IRCClient):
                     #if e.title.find('(New)') != -1 or e.title.find('(Reopened)') != -1:
                     
                     msg = "Redmine: (%s): %s" % (e.link, e.title)
-                    self.msg(self.factory.channel, msg.encode('ascii', 'ignore'))
+                    self.msg(self.factory.channel, msg.encode('utf-8', 'ignore'))
                     
                     # find the new latest time
                     if et > latest_new:
@@ -157,5 +157,6 @@ svn = SubversionBroadcast()
 rwBot = RwBotFactory('#knowhowERP_dev', 'rwbot', svn)
 
 reactor.connectTCP('irc.freenode.org', 6667, rwBot)
-reactor.listenUDP(45678, svn)
+reactor.listenUDP(45679, svn)
 reactor.run()
+
