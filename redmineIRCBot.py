@@ -105,7 +105,7 @@ class RwBot(irc.IRCClient):
             latest_new = self.redmine_latest
             # Then we run.
             self.redmine_next = self.redmine_next + 60 * 5
-            redmine = feedparser.parse("http://redmine.bring.out.ba/activity.atom?key=7c58101c32da49aba2e02f9c3354452efdcc0e7b")
+            redmine = feedparser.parse("http://redmine/activity.atom?key=7c58101c32da49aba2e02f9c3354452efdcc0e7b")
             
             for i in reversed(range(len(redmine.entries))):
                 e = redmine.entries[i]
