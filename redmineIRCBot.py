@@ -11,8 +11,7 @@ from twisted.internet.protocol import DatagramProtocol
 from twisted.words.protocols import irc
 import zlib
 import json
-
-
+from time import mktime, localtime
 
 class SubversionBroadcast(DatagramProtocol):
     def __init__(self):
@@ -52,12 +51,11 @@ class RwBot(irc.IRCClient):
     
     def privmsg(self, user, channel, msg):
         if msg.find(self.nickname) != -1 :
-            nick = user[0:user.find("!")]
-            self.msg(channel,  nick + ': ' + msg)
+            self.msg(channel, '> ' + ':P' )
     
     def irc_PING(self, prefix, params):
         irc.IRCClient.irc_PING(self, prefix, params) # call base method (required to PONG).
-        self._Wiki()
+        #self._Wiki()
         self._Redmine()
         r = random.random()
         t = time.gmtime()
@@ -70,7 +68,7 @@ class RwBot(irc.IRCClient):
         if t > self.wiki_next:
             latest_new = self.wiki_latest
             # Then we run.
-            self.wiki_next = self.wiki_next + 60*5
+            self.wiki_next = self.wiki_next + 60 * 5
             wiki = feedparser.parse("http://wiki/Special:RecentChanges?title=Special:RecentChanges&feed=atom")
             for i in reversed(range(len(wiki.entries))):
                 e = wiki.entries[i]
@@ -93,24 +91,23 @@ class RwBot(irc.IRCClient):
         if t > self.redmine_next:
             latest_new = self.redmine_latest
             # Then we run.
-            self.redmine_next = self.redmine_next + 60*5
+            self.redmine_next = self.redmine_next + 60 * 5
             redmine = feedparser.parse("http://redmine.bring.out.ba/activity.atom?key=7c58101c32da49aba2e02f9c3354452efdcc0e7b")
-            print "p"
+            
             for i in reversed(range(len(redmine.entries))):
-                print "provjera"
                 e = redmine.entries[i]
-                et = time.mktime(e.updated_parsed)
+                et = localtime(mktime(e.updated_parsed))
                 if et > self.redmine_latest:
                     # print it
                     #if e.title.find('(New)') != -1 or e.title.find('(Reopened)') != -1:
-                    print "jos provjera"
-                    msg = "Redmine (%s): %s" % (e.link, e.title)
+                    
+                    msg = "Redmine: (%s): %s" % (e.link, e.title)
                     self.msg(self.factory.channel, msg.encode('ascii', 'ignore'))
                     
                     # find the new latest time
                     if et > latest_new:
                         latest_new = et
-                    #if
+                    #!if
             #for
             self.redmine_latest = latest_new
     #_Redmine
@@ -156,14 +153,9 @@ class RwBotFactory(protocol.ClientFactory):
         print "Could not connect: %s" % (reason,)
 #RwBotFactory
 
-
-
 svn = SubversionBroadcast()
-rwBot = RwBotFactory('#jaso', 'rwbot', svn)
-
+rwBot = RwBotFactory('#knowhowERP_dev', 'rwbot', svn)
 
 reactor.connectTCP('irc.freenode.org', 6667, rwBot)
-
 reactor.listenUDP(45678, svn)
-
 reactor.run()
